@@ -1,33 +1,40 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShieldCheck } from "lucide-react"
-import GithubIcon from "@/components/ui/github-icon"
-import BrandGoogleIcon from "@/components/ui/brand-google-icon"
-import { createClient } from "@/lib/supabase/client"
-import { useState } from "react"
-import { toast } from "sonner"
+import { ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import BrandGoogleIcon from "@/components/ui/brand-google-icon";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import GithubIcon from "@/components/ui/github-icon";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
+  const [isLoading, setIsLoading] = useState(false);
+  const supabase = createClient();
 
-  const handleLogin = async (provider: 'github' | 'google') => {
-    setIsLoading(true)
+  const handleLogin = async (provider: "github" | "google") => {
+    setIsLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
-      })
-      if (error) throw error
+      });
+      if (error) throw error;
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in")
-      setIsLoading(false)
+      toast.error(error.message || "Failed to sign in");
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4">
@@ -43,19 +50,19 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="h-12 text-base font-medium transition-all hover:bg-primary/5"
-            onClick={() => handleLogin('github')}
+            onClick={() => handleLogin("github")}
             disabled={isLoading}
           >
             <GithubIcon size={20} className="mr-2" />
             Continue with GitHub
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="h-12 text-base font-medium transition-all hover:bg-primary/5"
-            onClick={() => handleLogin('google')}
+            onClick={() => handleLogin("google")}
             disabled={isLoading}
           >
             <BrandGoogleIcon size={20} className="mr-2" />
@@ -69,5 +76,5 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,16 +1,16 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Index() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/login")
+    return redirect("/login");
   }
 
-  return redirect("/dashboard")
+  return redirect("/dashboard");
 }
