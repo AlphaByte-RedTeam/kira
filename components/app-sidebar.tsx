@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { FileText, LayoutDashboard, LogOut, Settings, ChevronRight, UserCircle } from "lucide-react"
+import GithubIcon from "@/components/ui/github-icon"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
