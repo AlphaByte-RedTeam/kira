@@ -76,10 +76,10 @@ export function PDFReport({ data }: { data: any }) {
 
         <Text style={styles.sectionTitle}>3. Detailed Findings</Text>
         {(data.vulnerabilities || []).sort((a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)).map((v: any) => (
-          <View key={v.id} style={styles.finding} wrap={false}>
-            <View style={styles.findingHeader}>
+          <View key={v.id} style={styles.finding} wrap={true}>
+            <View style={styles.findingHeader} break={false}>
               <Text style={styles.findingTitle}>{v.synopsis}</Text>
-              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(v.severity) }]}>
+              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(v.severity), flexShrink: 0, alignSelf: 'flex-start' }]}>
                 <Text>{v.severity.toUpperCase()} ({v.cvss_score?.toFixed(1) || 0})</Text>
               </View>
             </View>
@@ -88,7 +88,9 @@ export function PDFReport({ data }: { data: any }) {
             
             <View wrap={true}>
               {(Array.isArray(v.screenshot_url) ? v.screenshot_url : [v.screenshot_url]).filter(Boolean).map((url: string, index: number) => (
-                <Image key={index} src={url} style={{ width: '100%', marginVertical: 10, objectFit: 'contain' }} />
+                <View key={index} wrap={false} style={{ marginVertical: 10 }}>
+                  <Image src={url} style={{ width: '100%', objectFit: 'contain' }} />
+                </View>
               ))}
             </View>
           </View>
