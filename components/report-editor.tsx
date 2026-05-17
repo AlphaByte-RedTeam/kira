@@ -57,8 +57,29 @@ const SortableFindingItem = ({ vuln, selected, onClick }: { vuln: any, selected:
     </div>
   )
 }
+import { z } from "zod"
+
+const targetSchema = z.object({
+  id: z.string(),
+  host: z.string().url("Must be a valid URL"),
+  ip: z.string().ipv4("Must be a valid IPv4 address"),
+  port: z.string().regex(/^\d+$/, "Port must be a number").transform(Number).pipe(z.number().min(1).max(65535))
+})
+
+const reportSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  client_id: z.string().min(1, "Client is required"),
+  targets: z.array(targetSchema).min(1, "At least one target is required")
+})
 
 export function ReportEditor({ initialData }: { initialData: any }) {
+  const isFormValid = reportSchema.safeParse({
+    title: report.title,
+    client_id: report.client_id,
+    targets: report.targets
+  }).success;
+// ... (rest of the component)
+
   const [report, setReport] = useState({
     ...initialData,
     title: initialData.title || "Untitled Report",
@@ -325,10 +346,11 @@ export function ReportEditor({ initialData }: { initialData: any }) {
           </AlertDialog>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled={!isDirty || !report.title || !report.client_id}>
+              <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled={!isFormValid}>
                 <Save className="size-4 mr-2" /> Publish
               </Button>
             </AlertDialogTrigger>
+
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Publish Report?</AlertDialogTitle>
