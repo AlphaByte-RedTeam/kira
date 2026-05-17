@@ -1,6 +1,8 @@
 "use client";
 
+import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,7 +33,8 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { generateId } from "@/lib/uuid";
 import { DEFAULT_CVSS_VECTOR } from "@/lib/cvss";
-import { debounce, isEqual } from "lodash";
+import { isEqual } from "lodash";
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { cn } from "@/lib/utils";
 import { VulnerabilityEditor } from "./vulnerability-editor";
 import dynamic from "next/dynamic";
@@ -120,14 +123,16 @@ const targetSchema = z.object({
   id: z.string(),
   host: z.string().url("Must be a valid URL"),
   ip: z.string().ipv4("Must be a valid IPv4 address"),
-  port: z.string().regex(/^\d+$/, "Port must be a number")
-})
-
+  port: z.string().regex(/^\d+$/, "Port must be a number"),
+});
 
 const reportSchema = z.object({
   title: z.string().min(1, "Title is required"),
   client_id: z.string().min(1, "Client is required"),
-  executive_summary: z.string().max(10000, "Summary must be 10000 characters or less").optional(),
+  executive_summary: z
+    .string()
+    .max(10000, "Summary must be 10000 characters or less")
+    .optional(),
 });
 
 export function ReportEditor({ initialData }: { initialData: any }) {
@@ -139,18 +144,17 @@ export function ReportEditor({ initialData }: { initialData: any }) {
     vulnerabilities: initialData.vulnerabilities || [],
   });
 
-  const [errors, setErrors] = useState<z.ZodFormattedError<any> | null>(null);
+  const [errors, setErrors] = useState<z.ZodFormattedError<unknown> | null>(
+    null,
+  );
 
-  useEffect(() => {
-    const result = reportSchema.safeParse({
-      title: report.title,
-      client_id: report.client_id,
-      executive_summary: report.executive_summary,
-    });
-    setErrors(result.success ? null : result.error.format());
-  }, [report.title, report.client_id, report.executive_summary]);
-
-  const isFormValid = errors === null;
+  // Compute validation errors during render
+  const validationResult = reportSchema.safeParse({
+    title: report.title,
+    client_id: report.client_id,
+    executive_summary: report.executive_summary,
+  });
+  const isFormValid = validationResult.success;
 
   const [originalReport, setOriginalReport] = useState(report);
   const isDirty = !isEqual(report, originalReport);
@@ -280,10 +284,7 @@ export function ReportEditor({ initialData }: { initialData: any }) {
     }
   };
 
-  const debouncedLookup = useCallback(
-    debounce((id: string, host: string) => handleLookupIp(id, host), 1000),
-    [],
-  );
+  const { debouncedLookup } = useDebouncedCallback(handleLookupIp, 1000);
 
   const saveDraft = (updatedReport: any) => {
     supabase
@@ -467,12 +468,11 @@ export function ReportEditor({ initialData }: { initialData: any }) {
               <Button
                 size="sm"
                 className="bg-green-600 hover:bg-green-700"
-                disabled={!isFormValid || !isDirty}
+                disabled={!isFormValid}
               >
                 <Save className="size-4 mr-2" /> Publish
               </Button>
             </AlertDialogTrigger>
-
 
             <AlertDialogContent>
               <AlertDialogHeader>

@@ -14,11 +14,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Kira | Secure Pentest Reporting",
-  description: "Standardize your vulnerability assessments into professional artifacts.",
+  description:
+    "Standardize your vulnerability assessments into professional artifacts.",
 };
 
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function RootLayout({
   children,

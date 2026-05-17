@@ -1,20 +1,24 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect, notFound } from "next/navigation"
-import { ReportEditor } from "@/components/report-editor"
-import { Container } from "@/components/ui/container"
-import AppLayout from "@/app/app-layout"
+import { notFound, redirect } from "next/navigation";
+import AppLayout from "@/app/app-layout";
+import { ReportEditor } from "@/components/report-editor";
+import { Container } from "@/components/ui/container";
+import { createClient } from "@/lib/supabase/server";
 
-export default async function ReportPage(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params
-  const id = params.id
-  
-  if (!id) return notFound()
+export default async function ReportPage(props: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await props.params;
+  const id = params.id;
 
-  const supabase = await createClient()
+  if (!id) return notFound();
+
+  const supabase = await createClient();
 
   const [
-    { data: { user } },
-    { data: report }
+    {
+      data: { user },
+    },
+    { data: report },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase
@@ -22,10 +26,10 @@ export default async function ReportPage(props: { params: Promise<{ id: string }
       .select("*, vulnerabilities(*)")
       .eq("id", id)
       .is("deleted_at", null)
-      .single()
-  ])
+      .single(),
+  ]);
 
-  if (!user) return redirect("/login")
+  if (!user) return redirect("/login");
 
   // If report not found (new draft), use template
   const reportData = report || {
@@ -36,12 +40,12 @@ export default async function ReportPage(props: { params: Promise<{ id: string }
     targets: [],
     vulnerabilities: [],
     executive_summary: "",
-    created_at: new Date().toISOString()
-  }
+    created_at: new Date().toISOString(),
+  };
 
   // Security check: ensure the report belongs to the user
   if (reportData.user_id !== user.id) {
-    return redirect("/dashboard?error=unauthorized")
+    return redirect("/dashboard?error=unauthorized");
   }
 
   return (
@@ -50,5 +54,5 @@ export default async function ReportPage(props: { params: Promise<{ id: string }
         <ReportEditor initialData={reportData} />
       </Container>
     </AppLayout>
-  )
+  );
 }
