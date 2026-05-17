@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
   reportType: { fontSize: 16, color: '#9ca3af', marginBottom: 40 },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12, marginTop: 24, color: '#111827', borderBottom: 1, borderBottomColor: '#e5e7eb', paddingBottom: 5 },
   finding: { marginBottom: 30, padding: 12, border: 1, borderColor: '#e5e7eb', borderRadius: 4 },
-  findingHeader: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#f9fafb', padding: 8, borderRadius: 4, marginBottom: 10 },
+  findingHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f9fafb', padding: 10, borderRadius: 4, marginBottom: 10 },
   findingTitle: { fontWeight: 'bold', fontSize: 12, color: '#111827' },
-  severityBadge: { padding: '4 8', borderRadius: 4, fontSize: 9, fontWeight: 'bold', color: 'white' },
+  severityBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 4, fontSize: 9, fontWeight: 'bold', color: 'white', textAlign: 'center' },
   footer: { position: 'absolute', bottom: 30, left: 40, right: 40, borderTop: 1, borderTopColor: '#e5e7eb', paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between', fontSize: 8, color: '#6b7280' },
   toc: { marginBottom: 30 },
   tocItem: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
@@ -79,9 +79,9 @@ export function PDFReport({ data }: { data: any }) {
           <View key={v.id} style={styles.finding} wrap={false}>
             <View style={styles.findingHeader}>
               <Text style={styles.findingTitle}>{v.synopsis}</Text>
-              <Text style={[styles.severityBadge, { backgroundColor: getSeverityColor(v.severity) }]}>
-                {v.severity.toUpperCase()} ({v.cvss_score?.toFixed(1) || 0})
-              </Text>
+              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(v.severity) }]}>
+                <Text>{v.severity.toUpperCase()} ({v.cvss_score?.toFixed(1) || 0})</Text>
+              </View>
             </View>
             <Text style={{ fontWeight: 'bold' }}>Description</Text>
             <Text style={{ marginBottom: 12 }}>{v.description}</Text>
