@@ -16,7 +16,7 @@ export function PDFPreview({ data, status }: { data: any, status: string }) {
 
   if (!isClient) {
     return (
-      <div className="flex h-[800px] items-center justify-center rounded-lg border border-dashed bg-muted/20">
+      <div className="flex h-200 items-center justify-center rounded-lg border border-dashed bg-muted/20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
@@ -50,7 +50,7 @@ export function PDFPreview({ data, status }: { data: any, status: string }) {
         )}
       </div>
       
-      <div className="overflow-hidden rounded-lg border bg-background shadow-sm h-[800px]">
+      <div className="overflow-hidden rounded-lg border bg-background shadow-sm h-200">
         <PDFViewer width="100%" height="100%" className="border-none" showToolbar={true}>
           <PDFReport data={data} />
         </PDFViewer>
