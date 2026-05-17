@@ -68,10 +68,20 @@ export function PDFReport({ data }: { data: any }) {
             <Text style={{ fontWeight: 'bold' }}>Description</Text>
             <Text style={{ marginBottom: 5 }}>{v.description}</Text>
             
-            {/* Allow multiple evidence screenshots */}
-            {(Array.isArray(v.screenshot_url) ? v.screenshot_url : [v.screenshot_url]).filter(Boolean).map((url: string, index: number) => (
-              <Image key={index} src={url} style={{ width: '100%', maxHeight: 200, marginVertical: 10 }} />
-            ))}
+            {/* Evidence rendering: Allow full width, original height aspect ratio, auto-wrap */}
+            <View wrap={true}>
+              {(Array.isArray(v.screenshot_url) ? v.screenshot_url : [v.screenshot_url]).filter(Boolean).map((url: string, index: number) => (
+                <Image 
+                  key={index} 
+                  src={url} 
+                  style={{ 
+                    width: '100%', 
+                    marginVertical: 10,
+                    objectFit: 'contain'
+                  }} 
+                />
+              ))}
+            </View>
           </View>
         ))}
         
