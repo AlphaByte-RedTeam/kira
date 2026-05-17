@@ -36,7 +36,7 @@ export function ProfileSettings({ user, profile }: { user: any, profile: any }) 
       if (pendingFiles.avatar) {
         const data = new FormData()
         data.append("file", pendingFiles.avatar)
-        data.append("path", `avatars/${user.id}/${pendingFiles.avatar.name}`)
+        data.append("path", `${user.id}/avatars/${pendingFiles.avatar.name}`)
         const res = await uploadEvidenceAction(data)
         if (res.error) throw new Error(res.error)
         newAvatarUrl = res.data.url
@@ -45,7 +45,7 @@ export function ProfileSettings({ user, profile }: { user: any, profile: any }) 
       if (pendingFiles.logo) {
         const data = new FormData()
         data.append("file", pendingFiles.logo)
-        data.append("path", `branding/${user.id}/${pendingFiles.logo.name}`)
+        data.append("path", `${user.id}/branding/${pendingFiles.logo.name}`)
         const res = await uploadEvidenceAction(data)
         if (res.error) throw new Error(res.error)
         newLogoUrl = res.data.url
@@ -126,9 +126,21 @@ export function ProfileSettings({ user, profile }: { user: any, profile: any }) 
               </button>
               <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleImageSelection(e, 'avatar')} />
             </div>
-            <div className="flex-1 space-y-2">
-              <Label>Full Name</Label>
-              <Input value={formData.full_name} onChange={(e) => setFormData(p => ({ ...p, full_name: e.target.value }))} />
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <Label>Full Name</Label>
+                <Input value={formData.full_name} onChange={(e) => setFormData(p => ({ ...p, full_name: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input 
+                  id="email" 
+                  value={user.email} 
+                  disabled 
+                  className="bg-muted/50"
+                />
+                <p className="text-[10px] text-muted-foreground italic">Email changes are managed via auth provider.</p>
+              </div>
             </div>
           </div>
         </CardContent>
