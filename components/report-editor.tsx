@@ -73,19 +73,20 @@ const reportSchema = z.object({
 })
 
 export function ReportEditor({ initialData }: { initialData: any }) {
-  const isFormValid = reportSchema.safeParse({
-    title: report.title,
-    client_id: report.client_id,
-    targets: report.targets
-  }).success;
-// ... (rest of the component)
-
   const [report, setReport] = useState({
     ...initialData,
     title: initialData.title || "Untitled Report",
     client_id: initialData.client_id || "",
     targets: initialData.targets || [],
     vulnerabilities: initialData.vulnerabilities || []
+  })
+
+  const isFormValid = reportSchema.safeParse({
+    title: report.title,
+    client_id: report.client_id,
+    targets: report.targets
+  }).success;
+
   })
   const [originalReport, setOriginalReport] = useState(report)
   const isDirty = !isEqual(report, originalReport)
