@@ -81,11 +81,18 @@ export function ReportEditor({ initialData }: { initialData: any }) {
     vulnerabilities: initialData.vulnerabilities || []
   })
 
-  const isFormValid = reportSchema.safeParse({
-    title: report.title,
-    client_id: report.client_id,
-    targets: report.targets
-  }).success;
+  const [errors, setErrors] = useState<z.ZodFormattedError<any> | null>(null)
+  
+  useEffect(() => {
+    const result = reportSchema.safeParse({
+      title: report.title,
+      client_id: report.client_id,
+      targets: report.targets
+    })
+    setErrors(result.success ? null : result.error.format())
+  }, [report.title, report.client_id, report.targets])
+
+  const isFormValid = errors === null
 
   const [originalReport, setOriginalReport] = useState(report)
   const isDirty = !isEqual(report, originalReport)
