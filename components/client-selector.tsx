@@ -91,10 +91,8 @@ export function ClientSelector({
   const selectedClient = clients.find((c) => c.id === value);
 
   React.useEffect(() => {
-    if (open) {
-      fetchClients();
-    }
-  }, [open]);
+    setClients(initialClients);
+  }, [initialClients]);
 
   return (
     <Dialog open={showNewClient} onOpenChange={setShowNewClient}>
