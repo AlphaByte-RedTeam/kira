@@ -87,7 +87,6 @@ export function ReportEditor({ initialData }: { initialData: any }) {
     targets: report.targets
   }).success;
 
-  })
   const [originalReport, setOriginalReport] = useState(report)
   const isDirty = !isEqual(report, originalReport)
   const [clients, setClients] = useState<any[]>([])
