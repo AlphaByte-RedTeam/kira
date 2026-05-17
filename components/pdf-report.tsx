@@ -7,18 +7,18 @@ const styles = StyleSheet.create({
   titlePage: { padding: 80, backgroundColor: '#111827', color: 'white', flex: 1, justifyContent: 'center', alignItems: 'center' },
   brandTitle: { fontSize: 32, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
   reportType: { fontSize: 16, color: '#9ca3af', marginBottom: 40 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12, marginTop: 20, color: '#111827', borderBottom: 1, borderBottomColor: '#e5e7eb', paddingBottom: 5 },
-  finding: { marginBottom: 20, padding: 10, border: 1, borderColor: '#e5e7eb', borderRadius: 4 },
-  findingHeader: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#f9fafb', padding: 8, borderRadius: 4, marginBottom: 8 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12, marginTop: 24, color: '#111827', borderBottom: 1, borderBottomColor: '#e5e7eb', paddingBottom: 5 },
+  finding: { marginBottom: 30, padding: 12, border: 1, borderColor: '#e5e7eb', borderRadius: 4 },
+  findingHeader: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#f9fafb', padding: 8, borderRadius: 4, marginBottom: 10 },
   findingTitle: { fontWeight: 'bold', fontSize: 12, color: '#111827' },
   severityBadge: { padding: '4 8', borderRadius: 4, fontSize: 9, fontWeight: 'bold', color: 'white' },
   footer: { position: 'absolute', bottom: 30, left: 40, right: 40, borderTop: 1, borderTopColor: '#e5e7eb', paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between', fontSize: 8, color: '#6b7280' },
   toc: { marginBottom: 30 },
   tocItem: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  scorecard: { flexDirection: 'row', justifyContent: 'space-around', marginVertical: 20 },
-  scoreItem: { alignItems: 'center', padding: 10, borderRadius: 4, width: '18%' },
-  scoreVal: { fontSize: 16, fontWeight: 'bold', color: 'white' },
-  scoreLabel: { fontSize: 8, color: 'white', marginTop: 4 }
+  scorecard: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 30, gap: 10 },
+  scoreItem: { alignItems: 'center', paddingVertical: 10, paddingHorizontal: 5, borderRadius: 4, flex: 1 },
+  scoreVal: { fontSize: 18, fontWeight: 'bold', color: 'white' },
+  scoreLabel: { fontSize: 9, color: 'white', marginTop: 4 }
 })
 
 export function PDFReport({ data }: { data: any }) {
@@ -60,7 +60,7 @@ export function PDFReport({ data }: { data: any }) {
       </Page>
 
       <Page size="A4" style={styles.page}>
-        <View style={styles.scorecard}>
+        <View style={styles.scorecard} break={false}>
           <View style={[styles.scoreItem, { backgroundColor: '#dc2626' }]}><Text style={styles.scoreVal}>{counts.critical || 0}</Text><Text style={styles.scoreLabel}>Critical</Text></View>
           <View style={[styles.scoreItem, { backgroundColor: '#ea580c' }]}><Text style={styles.scoreVal}>{counts.high || 0}</Text><Text style={styles.scoreLabel}>High</Text></View>
           <View style={[styles.scoreItem, { backgroundColor: '#ca8a04' }]}><Text style={styles.scoreVal}>{counts.medium || 0}</Text><Text style={styles.scoreLabel}>Medium</Text></View>
@@ -69,10 +69,10 @@ export function PDFReport({ data }: { data: any }) {
         </View>
 
         <Text style={styles.sectionTitle}>1. Executive Summary</Text>
-        <Text>{data.executive_summary || 'No summary.'}</Text>
+        <Text style={{ marginBottom: 20 }}>{data.executive_summary || 'No summary.'}</Text>
 
         <Text style={styles.sectionTitle}>2. Scope</Text>
-        <Text>{(data.targets || []).map((t: any) => `${t.host} (${t.ip})`).join(', ') || 'No targets.'}</Text>
+        <Text style={{ marginBottom: 20 }}>{(data.targets || []).map((t: any) => `${t.host} (${t.ip})`).join(', ') || 'No targets.'}</Text>
 
         <Text style={styles.sectionTitle}>3. Detailed Findings</Text>
         {(data.vulnerabilities || []).sort((a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)).map((v: any) => (
@@ -84,11 +84,11 @@ export function PDFReport({ data }: { data: any }) {
               </Text>
             </View>
             <Text style={{ fontWeight: 'bold' }}>Description</Text>
-            <Text style={{ marginBottom: 5 }}>{v.description}</Text>
+            <Text style={{ marginBottom: 12 }}>{v.description}</Text>
             
             <View wrap={true}>
               {(Array.isArray(v.screenshot_url) ? v.screenshot_url : [v.screenshot_url]).filter(Boolean).map((url: string, index: number) => (
-                <Image key={index} src={url} style={{ width: '100%', marginVertical: 10 }} />
+                <Image key={index} src={url} style={{ width: '100%', marginVertical: 10, objectFit: 'contain' }} />
               ))}
             </View>
           </View>
