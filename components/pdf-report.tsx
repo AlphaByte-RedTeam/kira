@@ -14,7 +14,11 @@ const styles = StyleSheet.create({
   severityBadge: { padding: '4 8', borderRadius: 4, fontSize: 9, fontWeight: 'bold', color: 'white' },
   footer: { position: 'absolute', bottom: 30, left: 40, right: 40, borderTop: 1, borderTopColor: '#e5e7eb', paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between', fontSize: 8, color: '#6b7280' },
   toc: { marginBottom: 30 },
-  tocItem: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }
+  tocItem: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  scorecard: { flexDirection: 'row', justifyContent: 'space-around', marginVertical: 20 },
+  scoreItem: { alignItems: 'center', padding: 10, borderRadius: 4, width: '18%' },
+  scoreVal: { fontSize: 16, fontWeight: 'bold', color: 'white' },
+  scoreLabel: { fontSize: 8, color: 'white', marginTop: 4 }
 })
 
 export function PDFReport({ data }: { data: any }) {
@@ -25,6 +29,12 @@ export function PDFReport({ data }: { data: any }) {
       default: return '#6b7280';
     }
   }
+
+  const counts = (data.vulnerabilities || []).reduce((acc: any, v: any) => {
+    const sev = (v.severity || 'None').toLowerCase()
+    acc[sev] = (acc[sev] || 0) + 1
+    return acc
+  }, {})
 
   return (
     <Document>
@@ -50,6 +60,14 @@ export function PDFReport({ data }: { data: any }) {
       </Page>
 
       <Page size="A4" style={styles.page}>
+        <View style={styles.scorecard}>
+          <View style={[styles.scoreItem, { backgroundColor: '#dc2626' }]}><Text style={styles.scoreVal}>{counts.critical || 0}</Text><Text style={styles.scoreLabel}>Critical</Text></View>
+          <View style={[styles.scoreItem, { backgroundColor: '#ea580c' }]}><Text style={styles.scoreVal}>{counts.high || 0}</Text><Text style={styles.scoreLabel}>High</Text></View>
+          <View style={[styles.scoreItem, { backgroundColor: '#ca8a04' }]}><Text style={styles.scoreVal}>{counts.medium || 0}</Text><Text style={styles.scoreLabel}>Medium</Text></View>
+          <View style={[styles.scoreItem, { backgroundColor: '#16a34a' }]}><Text style={styles.scoreVal}>{counts.low || 0}</Text><Text style={styles.scoreLabel}>Low</Text></View>
+          <View style={[styles.scoreItem, { backgroundColor: '#2563eb' }]}><Text style={styles.scoreVal}>{counts.informational || 0}</Text><Text style={styles.scoreLabel}>Info</Text></View>
+        </View>
+
         <Text style={styles.sectionTitle}>1. Executive Summary</Text>
         <Text>{data.executive_summary || 'No summary.'}</Text>
 
@@ -57,7 +75,7 @@ export function PDFReport({ data }: { data: any }) {
         <Text>{(data.targets || []).map((t: any) => `${t.host} (${t.ip})`).join(', ') || 'No targets.'}</Text>
 
         <Text style={styles.sectionTitle}>3. Detailed Findings</Text>
-        {(data.vulnerabilities || []).map((v: any) => (
+        {(data.vulnerabilities || []).sort((a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0)).map((v: any) => (
           <View key={v.id} style={styles.finding} wrap={false}>
             <View style={styles.findingHeader}>
               <Text style={styles.findingTitle}>{v.synopsis}</Text>
@@ -68,18 +86,9 @@ export function PDFReport({ data }: { data: any }) {
             <Text style={{ fontWeight: 'bold' }}>Description</Text>
             <Text style={{ marginBottom: 5 }}>{v.description}</Text>
             
-            {/* Evidence rendering: Allow full width, original height aspect ratio, auto-wrap */}
             <View wrap={true}>
               {(Array.isArray(v.screenshot_url) ? v.screenshot_url : [v.screenshot_url]).filter(Boolean).map((url: string, index: number) => (
-                <Image 
-                  key={index} 
-                  src={url} 
-                  style={{ 
-                    width: '100%', 
-                    marginVertical: 10,
-                    objectFit: 'contain'
-                  }} 
-                />
+                <Image key={index} src={url} style={{ width: '100%', marginVertical: 10 }} />
               ))}
             </View>
           </View>
