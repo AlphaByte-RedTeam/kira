@@ -74,11 +74,12 @@ export function ClientManager() {
   }, []);
 
   const handleSave = async () => {
-    const result = clientSchema.safeParse({ name, website });
+    const result = clientSchema.safeParse({ name, website })
     if (!result.success) {
-      toast.error(result.error.errors[0].message);
-      return;
+      toast.error(result.error.issues[0].message)
+      return
     }
+
 
     const {
       data: { user },

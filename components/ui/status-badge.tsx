@@ -20,15 +20,19 @@ const getStatusStyles = (variant?: string) => {
   return "";
 };
 
-type StatusBadgeProps = React.ComponentProps<typeof Badge>;
+interface StatusBadgeProps extends Omit<React.ComponentProps<typeof Badge>, "variant"> {
+  variant?: "published" | "draft" | "default" | "secondary" | "destructive" | "outline" | "ghost" | "link";
+}
 
 function StatusBadge({ className, variant, ...props }: StatusBadgeProps) {
-  const statusStyles = getStatusStyles(variant as string | undefined);
+  const statusStyles = getStatusStyles(variant);
   return (
     <Badge
       className={cn(statusStyles, className)}
       variant={
-        variant === "published" || variant === "draft" ? "default" : variant
+        variant === "published" || variant === "draft"
+          ? "default"
+          : (variant as any)
       }
       {...props}
     />

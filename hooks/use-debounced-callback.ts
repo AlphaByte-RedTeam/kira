@@ -1,16 +1,17 @@
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-
-export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
-  callback: T,
+export function useDebouncedCallback<TArgs extends unknown[], TResult>(
+  callback: (...args: TArgs) => TResult,
   delay: number,
 ) {
   const [debounced] = useState(() =>
-    debounce((...args: Parameters<T>) => callback(...args), delay),
+    debounce((...args: TArgs) => callback(...args), delay),
   );
 
   useEffect(() => {
-    debounced.cancel();
+    return () => {
+      debounced.cancel();
+    };
   }, [debounced]);
 
   return debounced;

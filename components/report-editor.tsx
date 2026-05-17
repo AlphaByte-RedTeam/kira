@@ -32,6 +32,7 @@ import { Save, Trash2, Plus, Menu, RefreshCw, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { generateId } from "@/lib/uuid";
+import { uploadEvidenceAction } from "@/app/actions/storage";
 import { DEFAULT_CVSS_VECTOR } from "@/lib/cvss";
 import { isEqual } from "lodash";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
@@ -284,7 +285,10 @@ export function ReportEditor({ initialData }: { initialData: any }) {
     }
   };
 
-  const { debouncedLookup } = useDebouncedCallback(handleLookupIp, 1000);
+  const debouncedLookup = useDebouncedCallback(
+    (id: unknown, host: unknown) => handleLookupIp(id as string, host as string),
+    1000
+  );
 
   const saveDraft = (updatedReport: any) => {
     supabase
@@ -354,7 +358,7 @@ export function ReportEditor({ initialData }: { initialData: any }) {
               );
               const result = await uploadEvidenceAction(formData);
               if (result.error) throw new Error(result.error);
-              return result.data.url;
+              return result.data?.url;
             }
             return url;
           }),
