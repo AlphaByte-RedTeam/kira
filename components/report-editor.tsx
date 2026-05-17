@@ -120,14 +120,14 @@ const targetSchema = z.object({
   id: z.string(),
   host: z.string().url("Must be a valid URL"),
   ip: z.string().ipv4("Must be a valid IPv4 address"),
-  port: z.preprocess((val) => Number(val), z.number().min(1).max(65535)),
-});
+  port: z.string().regex(/^\d+$/, "Port must be a number")
+})
+
 
 const reportSchema = z.object({
   title: z.string().min(1, "Title is required"),
   client_id: z.string().min(1, "Client is required"),
   executive_summary: z.string().max(10000, "Summary must be 10000 characters or less").optional(),
-  targets: z.array(targetSchema).min(1, "At least one target is required"),
 });
 
 export function ReportEditor({ initialData }: { initialData: any }) {
@@ -146,10 +146,9 @@ export function ReportEditor({ initialData }: { initialData: any }) {
       title: report.title,
       client_id: report.client_id,
       executive_summary: report.executive_summary,
-      targets: report.targets,
     });
     setErrors(result.success ? null : result.error.format());
-  }, [report.title, report.client_id, report.executive_summary, report.targets]);
+  }, [report.title, report.client_id, report.executive_summary]);
 
   const isFormValid = errors === null;
 
@@ -468,11 +467,12 @@ export function ReportEditor({ initialData }: { initialData: any }) {
               <Button
                 size="sm"
                 className="bg-green-600 hover:bg-green-700"
-                disabled={!isFormValid}
+                disabled={!isFormValid || !isDirty}
               >
                 <Save className="size-4 mr-2" /> Publish
               </Button>
             </AlertDialogTrigger>
+
 
             <AlertDialogContent>
               <AlertDialogHeader>
