@@ -13,9 +13,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Checkbox } from "@/components/ui/checkbox"
 import { z } from "zod"
 
+const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/;
+
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name must be 255 characters or less"),
-  website: z.string().max(1000, "Website must be 1000 characters or less").optional().or(z.literal(''))
+  website: z.string()
+    .regex(domainRegex, "Website must be a valid domain (e.g. example.com)")
+    .optional()
+    .or(z.literal(''))
 })
 
 export function ClientManager() {
