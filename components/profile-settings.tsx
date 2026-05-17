@@ -55,7 +55,7 @@ export function ProfileSettings({
         data.append("path", `${user.id}/avatars/${pendingFiles.avatar.name}`);
         const res = await uploadEvidenceAction(data);
         if (res.error) throw new Error(res.error);
-        newAvatarUrl = res.data.url;
+        newAvatarUrl = res.data?.url;
       }
 
       if (pendingFiles.logo) {
@@ -64,7 +64,7 @@ export function ProfileSettings({
         data.append("path", `${user.id}/branding/${pendingFiles.logo.name}`);
         const res = await uploadEvidenceAction(data);
         if (res.error) throw new Error(res.error);
-        newLogoUrl = res.data.url;
+        newLogoUrl = res.data?.url;
       }
 
       const { error } = await supabase.from("profiles").upsert({
