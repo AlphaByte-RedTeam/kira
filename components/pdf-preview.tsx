@@ -3,7 +3,7 @@
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
 import { PDFReport } from './pdf-report'
 import { Button } from '@/components/ui/button'
-import { Download, FileText, Loader2 } from 'lucide-react'
+import { Download, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 export function PDFPreview({ data, status }: { data: any, status: string }) {
@@ -16,7 +16,7 @@ export function PDFPreview({ data, status }: { data: any, status: string }) {
 
   if (!isClient) {
     return (
-      <div className="flex h-[600px] items-center justify-center rounded-lg border border-dashed bg-muted/20">
+      <div className="flex h-[800px] items-center justify-center rounded-lg border border-dashed bg-muted/20">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
@@ -36,7 +36,7 @@ export function PDFPreview({ data, status }: { data: any, status: string }) {
             document={<PDFReport data={data} />}
             fileName={`${data.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`}
           >
-            {({ blob, url, loading, error }) => (
+            {({ loading }) => (
               <Button disabled={loading}>
                 {loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -51,7 +51,7 @@ export function PDFPreview({ data, status }: { data: any, status: string }) {
       </div>
       
       <div className="overflow-hidden rounded-lg border bg-background shadow-sm h-[800px]">
-        <PDFViewer width="100%" height="100%" className="border-none" showToolbar={false}>
+        <PDFViewer width="100%" height="100%" className="border-none" showToolbar={true}>
           <PDFReport data={data} />
         </PDFViewer>
       </div>

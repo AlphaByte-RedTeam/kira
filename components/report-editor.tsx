@@ -28,6 +28,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { StatusBadge } from "@/components/ui/status-badge"
+import { Scorecard } from "./scorecard"
 
 const PDFPreview = dynamic(() => import("./pdf-preview").then(mod => mod.PDFPreview), {
   ssr: false,
@@ -350,6 +351,7 @@ export function ReportEditor({ initialData }: { initialData: any }) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          <Scorecard vulnerabilities={report.vulnerabilities} />
           <Card>
             <CardHeader><CardTitle>Report Details</CardTitle></CardHeader>
             <CardContent className="space-y-4">
