@@ -18,9 +18,8 @@ const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})
 const clientSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name must be 255 characters or less"),
   website: z.string()
+    .min(1, "Website is required")
     .regex(domainRegex, "Website must be a valid domain (e.g. example.com)")
-    .optional()
-    .or(z.literal(''))
 })
 
 export function ClientManager() {
@@ -28,6 +27,7 @@ export function ClientManager() {
   const [selectedIds, setSelectedIds] = React.useState<string[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [editingClient, setEditingClient] = React.useState<any>(null)
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const [name, setName] = React.useState("")
   const [website, setWebsite] = React.useState("")
   const supabase = createClient()
@@ -58,7 +58,7 @@ export function ClientManager() {
       await supabase.from("clients").insert({ name, website, user_id: user.id })
     }
     toast.success("Client saved")
-    setEditingClient(null); setName(""); setWebsite(""); fetchClients()
+    setEditingClient(null); setName(""); setWebsite(""); fetchClients(); setIsDialogOpen(false)
   }
 
   const handleDeleteSelected = async () => {
@@ -108,9 +108,9 @@ export function ClientManager() {
               </AlertDialogContent>
             </AlertDialog>
           )}
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingClient(null); setName(""); setWebsite("") }}><Plus className="size-4 mr-2" /> Add Client</Button>
+              <Button onClick={() => { setIsDialogOpen(true); setEditingClient(null); setName(""); setWebsite("") }}><Plus className="size-4 mr-2" /> Add Client</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>{editingClient ? "Edit Client" : "New Client"}</DialogTitle></DialogHeader>
@@ -118,7 +118,7 @@ export function ClientManager() {
                 <div className="space-y-1"><Label>Name</Label><Input maxLength={255} value={name} onChange={e => setName(e.target.value)} /></div>
                 <div className="space-y-1"><Label>Website</Label><Input maxLength={1000} value={website} onChange={e => setWebsite(e.target.value)} /></div>
               </div>
-              <DialogFooter><Button onClick={handleSave}>Save</Button></DialogFooter>
+              <DialogFooter><Button disabled={!clientSchema.safeParse({ name, website }).success} onClick={handleSave}>Save</Button></DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
@@ -140,7 +140,7 @@ export function ClientManager() {
               <TableCell>{c.name}</TableCell>
               <TableCell>{c.website}</TableCell>
               <TableCell className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => { setEditingClient(c); setName(c.name); setWebsite(c.website || ""); }}><Pencil className="size-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => { setIsDialogOpen(true); setEditingClient(c); setName(c.name); setWebsite(c.website || ""); }}><Pencil className="size-4" /></Button>
               </TableCell>
             </TableRow>
           ))}
